@@ -38,7 +38,7 @@ object NestedSetUtil {
             }
         }
 
-        // Build tree by assigning children to parents
+        // Build a tree by assigning children to parents
         nodes.sortedByDescending { it.left }.forEach { node ->
             val parent = responseMap[node.id]
             val children = childrenByParentId[node.id]

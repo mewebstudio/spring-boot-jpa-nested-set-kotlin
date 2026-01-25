@@ -44,7 +44,7 @@ interface JpaNestedSetRepository<T : INestedSetNode<ID, T>, ID> : JpaRepository<
     fun findLeafNodes(): List<T>
 
     /**
-     * Find previous sibling of a node by its parentId and left value.
+     * Find the previous sibling of a node by its parentId and left value.
      *
      * @param parentId The ID of the parent node. If null, it searches for root nodes.
      * @param left The left value of the node to find the previous sibling for.
@@ -64,7 +64,7 @@ interface JpaNestedSetRepository<T : INestedSetNode<ID, T>, ID> : JpaRepository<
     fun findPrevSibling(@Param("parentId") parentId: ID?, @Param("left") left: Int): T?
 
     /**
-     * Find next sibling of a node by its parentId and left value.
+     * Find the next sibling of a node by its parentId and left value.
      *
      * @param parentId The ID of the parent node. If null, it searches for root nodes.
      * @param right The right value of the node to find the next sibling for.
@@ -106,12 +106,42 @@ interface JpaNestedSetRepository<T : INestedSetNode<ID, T>, ID> : JpaRepository<
      * and the node ID is not equal to the provided selfId.
      * This is used to find nodes that share the same parent.
      *
-     * @param parentId The ID of the parent node.
+     * @param parentId The ID of the parent node. If null, it searches for root nodes.
      * @param selfId The ID of the node itself. This is used to exclude the node from the results.
      * @return A list of all sibling nodes ordered by their left value.
      */
-    @Query("SELECT e FROM #{#entityName} e WHERE e.parent.id = :parentId AND e.id <> :selfId ORDER BY e.left")
-    fun findSiblings(@Param("parentId") parentId: ID, @Param("selfId") selfId: ID): List<T>
+    @Query(
+        """
+        SELECT e FROM #{#entityName} e
+        WHERE (
+            (:parentId IS NULL AND e.parent IS NULL)
+            OR (:parentId IS NOT NULL AND e.parent.id = :parentId)
+        )
+        AND e.id <> :selfId
+        ORDER BY e.left
+        """
+    )
+    fun findSiblings(@Param("parentId") parentId: ID?, @Param("selfId") selfId: ID): List<T>
+
+    /**
+     * Find all siblings of a given node, including the node itself.
+     * This method retrieves nodes where the parent ID matches the provided parentId.
+     * This is used to find all nodes that share the same parent, including the node itself.
+     *
+     * @param parentId The ID of the parent node. If null, it searches for root nodes.
+     * @return A list of all sibling nodes, including the node itself, ordered by their left value.
+     */
+    @Query(
+        """
+        SELECT e FROM #{#entityName} e
+        WHERE (
+            (:parentId IS NULL AND e.parent IS NULL)
+            OR (:parentId IS NOT NULL AND e.parent.id = :parentId)
+        )
+        ORDER BY e.left
+        """
+    )
+    fun findSiblingsIncludingSelf(@Param("parentId") parentId: ID?): List<T>
 
     /**
      * Find all ancestors of a given node.
@@ -236,12 +266,12 @@ interface JpaNestedSetRepository<T : INestedSetNode<ID, T>, ID> : JpaRepository<
     fun findByParentId(@Param("parentId") parentId: ID): List<T>
 
     /**
-     * Find all nodes with left value between the specified range.
+     * Find all nodes with the left value between the specified range.
      * This is useful when moving nodes within the nested set.
      *
      * @param left The left value of the range.
      * @param right The right value of the range.
-     * @return A list of all nodes with left value between the specified range ordered by their left value.
+     * @return A list of all nodes with a left value between the specified range ordered by their left value.
      */
     @Query("SELECT e FROM #{#entityName} e WHERE e.left BETWEEN :left AND :right ORDER BY e.left")
     fun findByLeftBetween(@Param("left") left: Int, @Param("right") right: Int): List<T>
