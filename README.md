@@ -49,13 +49,13 @@ Add the following dependency to your `pom.xml` file:
 <dependency>
   <groupId>com.mewebstudio</groupId>
   <artifactId>spring-boot-jpa-nested-set-kotlin</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.5</version>
 </dependency>
 ```
 #### for gradle users
 Add the following dependency to your `build.gradle` file:
 ```groovy
-implementation 'com.mewebstudio:spring-boot-jpa-nested-set-kotlin:0.1.0'
+implementation 'com.mewebstudio:spring-boot-jpa-nested-set-kotlin:0.1.5'
 ```
 
 ## 🚀 Usage
