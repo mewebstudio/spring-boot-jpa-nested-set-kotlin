@@ -7,7 +7,7 @@ package com.mewebstudio.springboot.jpa.nestedset.kotlin
  * @param ID The type of the identifier for the nested set node.
  * @param T The type of the nested set node itself.
  */
-interface INestedSetNode<ID, T : INestedSetNode<ID, T>> {
+interface INestedSetNode<ID : Any, T : INestedSetNode<ID, T>> {
     /**
      * The unique identifier of the node.
      */

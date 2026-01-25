@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param
  * @param ID Type of the identifier for the nested set node.
  */
 @NoRepositoryBean
-interface JpaNestedSetRepository<T : INestedSetNode<ID, T>, ID> : JpaRepository<T, ID> {
+interface JpaNestedSetRepository<T : INestedSetNode<ID, T>, ID : Any> : JpaRepository<T, ID> {
     /**
      * Find all nodes in the tree, ordered by their left value.
      * This method retrieves all nodes in the tree structure.

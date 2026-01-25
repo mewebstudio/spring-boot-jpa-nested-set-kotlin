@@ -6,7 +6,7 @@ package com.mewebstudio.springboot.jpa.nestedset.kotlin
  *
  * @param <ID> Type of the node identifier.
  */
-interface INestedSetNodeResponse<ID> {
+interface INestedSetNodeResponse<ID : Any> {
     /**
      * The unique identifier of the node.
      */

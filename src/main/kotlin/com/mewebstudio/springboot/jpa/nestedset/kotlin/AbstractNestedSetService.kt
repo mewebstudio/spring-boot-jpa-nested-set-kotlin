@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional
  * @param T The type of the nested set node.
  * @param ID The type of the identifier for the nested set node.
  */
-abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID>(
+abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
     open val repository: JpaNestedSetRepository<T, ID>
 ) {
     /**
