@@ -25,7 +25,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      * @param entity The node whose ancestors are to be found.
      * @return A list of ancestor nodes.
      */
-    fun getAncestors(entity: T): List<T> = repository.findAncestors(entity.left, entity.right)
+    open fun getAncestors(entity: T): List<T> = repository.findAncestors(entity.left, entity.right)
 
     /**
      * Get descendants of a node.
@@ -33,7 +33,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      * @param entity The node whose descendants are to be found.
      * @return A list of descendant nodes.
      */
-    fun getDescendants(entity: T): List<T> = repository.findDescendants(entity.left, entity.right)
+    open fun getDescendants(entity: T): List<T> = repository.findDescendants(entity.left, entity.right)
 
     /**
      * Move a node up in the tree.
@@ -130,7 +130,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      * @param newParent T? The new parent node.
      * @return Boolean True if the parent has changed, false otherwise.
      */
-    protected fun hasParentChanged(node: T, newParent: T?): Boolean {
+    protected open fun hasParentChanged(node: T, newParent: T?): Boolean {
         val currentParentId = node.parent?.id
         val newParentId = newParent?.id
 
@@ -326,7 +326,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      * @param descendant T The potential descendant node.
      * @return True if the descendant is a child of the ancestor, false otherwise.
      */
-    protected fun isDescendant(ancestor: T, descendant: T): Boolean =
+    protected open fun isDescendant(ancestor: T, descendant: T): Boolean =
         descendant.left > ancestor.left && descendant.right < ancestor.right
 
     /**
@@ -386,7 +386,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      *
      * @param nodes List The list of nodes to be saved.
      */
-    protected fun saveAllNodes(nodes: List<T>) {
+    protected open fun saveAllNodes(nodes: List<T>) {
         repository.saveAll(nodes)
         repository.flush()
     }
@@ -396,7 +396,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      *
      * @param subtreeNodes List The list of nodes in the subtree.
      */
-    protected fun moveSubtreeToTempOffset(subtreeNodes: List<T>) {
+    protected open fun moveSubtreeToTempOffset(subtreeNodes: List<T>) {
         subtreeNodes.forEach {
             it.left += TEMP_OFFSET
             it.right += TEMP_OFFSET
@@ -411,7 +411,7 @@ abstract class AbstractNestedSetService<T : INestedSetNode<ID, T>, ID : Any>(
      * @param oldRight Int The original right value of the subtree.
      * @param shift Int The shift to apply to the subtree.
      */
-    protected fun moveSubtreeFromTempToFinalPosition(oldLeft: Int, oldRight: Int, shift: Int) {
+    protected open fun moveSubtreeFromTempToFinalPosition(oldLeft: Int, oldRight: Int, shift: Int) {
         val movedSubtreeNodes = repository.findSubtree(oldLeft + TEMP_OFFSET, oldRight + TEMP_OFFSET)
         movedSubtreeNodes.forEach {
             it.left = it.left - TEMP_OFFSET + shift
